@@ -1,6 +1,8 @@
 import PIL.Image as Image
 import numpy as np
 import cv2
+from pathlib import Path
+import sys
 
 def calc_parts_center(face):
     """
@@ -54,14 +56,14 @@ def calc_rotated_position(origin, point, angle):
     return qx, qy
 
 
-def convert_to_pil_to_cv2_image(pil_image):
+def convert_pil_to_cv2_image(pil_image):
     """
         Converts a PIL Image to a cv2 image. 
         Returns a cv2 image.
     """
     return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 
-def convert_to_cv2_to_pil_image(cv2_image):
+def convert_cv2_to_pil_image(cv2_image):
     return Image.fromarray(np.uint8(cv2_image)).convert('RGB')
 
 
@@ -96,14 +98,21 @@ def read_image(filepath):
     """
     return cv2.imread(filepath)
 
-def write_image(img, savepath):
+def write_image(img, output_path):
     """
         Writes the image to disk.
         Parameters:
             img: cv2 image. 
-            savepath: filepath to save to.
+            output_path: filepath to save to.
     """
-    cv2.imwrite(savepath, img)
+    p = Path(output_path)
+    if not p.parent.exists():
+        p.parent.mkdir(parents=True, exist_ok=True)
+
+    cv2.imwrite(output_path, img)
+
+def encode_image_to_buffer(img, fmt='.jpg'):
+    return cv2.imencode(fmt, img)[1]
 
 
 # def is_inside_polygon(between_point, polygon_points):

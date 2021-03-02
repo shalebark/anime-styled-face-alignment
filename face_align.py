@@ -42,28 +42,43 @@ def align_face(filepath=None, image=None, axis='z'):
 
     if filepath:
         image = util.read_image(filepath)
+
     face = face_detect(image)
     return _align_face(image, face)
 
 if __name__ == '__main__':
     import argparse
-    import os
+    from pathlib import Path
+    import sys
     parser = argparse.ArgumentParser(description='Aligns Facial Features of Animated Characters')
-    parser.add_argument('images', metavar='Images', nargs='+', help='Filepaths to images with facial features to be aligned.')
-    parser.add_argument('--dest', metavar='Destination', dest='destdir', help='Output directory. (default: current working directory)')
+    parser.add_argument('image', metavar='Images', 
+        help='Filepaths to images with facial features to be aligned.')
+    parser.add_argument('-o', '--output-redirect', dest='is_to_stdout', action='store_true',
+        help='Output image as binary data to stdout')
+    parser.add_argument('-d', '--destination', metavar='Destination', dest='dest_path', nargs='?', default='output.jpg', type=Path, 
+        help='Output directory. (default: current working directory)')
 
     args = parser.parse_args()
-    images = args.images
-    destdir = args.destdir if args.destdir is not None else os.getcwd()
+    image = args.image
+    destp = args.dest_path.absolute()
+    is_to_stdout = args.is_to_stdout
         
-    for image in images:
-        try:
-            imagepath = image if os.path.isabs(image) else os.path.join(os.getcwd(), image)
-            aligned_image = align_face(filepath=imagepath)
-            destination_path = os.path.join(destdir, os.path.basename(image))
-            util.write_image(aligned_image, destination_path)
+    try:
+        # determine paths
+        imagep = Path(image)
+        outputp = destp if destp.suffix else destp.joinpath(imagep.name)
+
+        # api call to align image
+        aligned_image = align_face(filepath=str(imagep.absolute()))
+
+        if not is_to_stdout:
+            # write aligned image to file
+            util.write_image(aligned_image, str(outputp))
             # Message to stdout, success
-            print('"{}" aligned. Save to: "{}"'.format(image, destination_path))
-        except AssertionError as err:
-            print('Unable to align image ' + image, file=sys.stderr)
-            print(str(err), file=sys.stderr)
+            print('"{}" aligned. Save to: "{}"'.format(image, outputp))
+        else:
+            sys.stdout.buffer.write(util.encode_image_to_buffer(aligned_image))
+
+    except AssertionError as err:
+        print('Unable to align image ' + image, file=sys.stderr)
+        print(str(err), file=sys.stderr)

@@ -11,7 +11,7 @@ def face_detect(img):
         Parameters:
             img: cv2 image
     """
-    faces = animeface.detect(util.convert_to_cv2_to_pil_image(img))
+    faces = animeface.detect(util.convert_cv2_to_pil_image(img))
     if (len(faces) == 0):
         return False
     return faces[0]
