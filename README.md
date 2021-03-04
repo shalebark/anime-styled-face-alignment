@@ -27,7 +27,7 @@ python3 -m pip install -r requirements.txt
 ## Usage
 
 ```
-python face-align.py {path/to/my/image/image.jpg} --destination={/path/to/output/image.jpg}
+python cli.py {path/to/my/image/image.jpg} {/path/to/output/image.jpg}
 ```
 
 ## Usage with Docker
@@ -40,17 +40,35 @@ If you have docker installed, you can run the image through docker.
 docker build -t anime-style-face-align .
 ```
 
-### Example using example image
+### Docker example with your image
 
 ```
-docker run anime-style-face-align -p /app/examples/test.jpg > output.jpg
-```
-
-### Example with your image
-
-```
-docker run anime-style-face-align -v {path-to-your-image}:/root/ {your-image-name} > {output-file.jpg}
+docker run -v {parent-directory-to-your-image}:/root/ anime-style-face-align -o {your-image-name} > {output-file.jpg}
 ```
 
 For more information on flags, use --help.
 
+## Visualize the facial features
+
+python cli.py --visualize {path/to/my/image/image.jpg} {/path/to/output/image.jpg}
+
+## API Example
+
+```
+# add file to your path
+import os, sys
+sys.path.append(os.path.abspath('anime_face_alignment'))
+
+# importing the library
+from anime_face_alignment import align_face as anime_face_align
+# used to save the imagefile
+import cv2
+
+# aligning the image from filepath
+img = anime_face_align(filepath='filepath')
+
+# aligning the image from image
+img = cv2.imread('filepath')
+
+cv2.imwrite('outputpath', img)
+```

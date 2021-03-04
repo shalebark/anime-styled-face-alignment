@@ -1,9 +1,53 @@
+import numpy as np
 import _util as util
-import cv2
 from _face_detect import face_detect
+import cv2
+
+def _calculate_face_z_alignment_angle(centers):
+    """
+        Calculate the angle, the face is rotated in, in respect to the z-axis.
+        Returns the angle of misalignment, in radians.
+
+        Parameters:
+            A dictionary of centers of facial components.
+    """
+    x = [centers['left-eye-center'][0] - centers['right-eye-center'][0]]
+    y = [centers['left-eye-center'][1] - centers['right-eye-center'][1]]
+    return np.arctan2(y, x)[0]
+
+def _align_face(img, face):
+    """
+        Aligns image so that the face in the image is aligned, in the z-axis.
+
+        Parameters:
+            img: PIL image
+            face: An animeface face object
+    """
+    centers = util.calc_parts_center(face)
+    angle = _calculate_face_z_alignment_angle(centers)
+    return util.rotate_image(img, angle, centers['nose-center'])
+
+def align_face(filepath=None, image=None, axis='z'):
+    """
+        Aligns the facial image.
+        Returns the image as a cv2 image
+
+        Parameters:
+            filepath: The path of the facial image. Use either filepath or image.
+            image: The facial image, expects cv2 image. Use either filepath or image.
+    """
+    assert filepath is None or image is None, "Cannot use both filepath and image as parameters. Use either filepath or image."
+    assert filepath is not None or image is not None, "Missing filepath or image."
+
+    if filepath:
+        image = util.read_image(filepath)
+
+    face = face_detect(image)
+    return _align_face(image, face)
+
 
 # draw parts
-def draw_facial_lines(img, face):
+def _draw_facial_lines(img, face):
     """
         Returns a cv2 image with markers draw on key points.
         
@@ -57,7 +101,7 @@ def draw_facial_lines(img, face):
 
     return img
 
-def visualize(filepath=None, image=None):
+def visualize_facial_lines(filepath=None, image=None):
     """
         Visualize the facial alignment.
         Returns the visualized image as a cv2 image
@@ -74,7 +118,7 @@ def visualize(filepath=None, image=None):
 
     face = face_detect(image)
     assert face is not False, "No faces found."
-    return draw_facial_lines(image, face)
+    return _draw_facial_lines(image, face)
 
 if __name__ == '__main__':
     import sys
@@ -99,4 +143,4 @@ if __name__ == '__main__':
         except AssertionError as err:
             print('Unable to align image ' + image, file=sys.stderr)
             sys.stderr.writelines(str(err), file=sys.stderr)
-            
+                

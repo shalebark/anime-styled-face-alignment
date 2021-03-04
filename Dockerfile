@@ -7,4 +7,4 @@ WORKDIR /root
 COPY . /app
 RUN python3 -m pip install -r /app/requirements.txt
 
-ENTRYPOINT ["python3", "/app/face_align.py"]
+ENTRYPOINT ["python3", "/app/cli.py"]
