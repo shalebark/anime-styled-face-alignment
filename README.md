@@ -75,8 +75,7 @@ cv2.imwrite('outputpath', img)
 
 # Results
 
-![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test.jpg)
+Source             |  Feature Visualization             |      Results
+:-------------------------:|:-------------------------:|:-------------------------:|
+![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test.jpg)  |  ![](https://github.com/shalebark/anime-styled-face-alignment/raw/develop/examples/test_visuals.jpg) | ![](https://github.com/shalebark/anime-styled-face-alignment/raw/develop/examples/test_result.jpg)
 
-![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test_results.jpg)
-
-![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test_visuals.jpg)
