@@ -72,3 +72,11 @@ img = cv2.imread('filepath')
 
 cv2.imwrite('outputpath', img)
 ```
+
+# Results
+
+![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test.jpg)
+
+![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test_results.jpg)
+
+![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test_visuals.jpg)
