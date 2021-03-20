@@ -74,7 +74,7 @@ for i, face in enumerate(faces):
 
 # Results
 
-Source             |  Features             |      Results
-:-------------------------:|:-------------------------:|:-------------------------:|
-![](https://github.com/shalebark/anime-styled-face-alignment/raw/master/examples/test.jpg)  |  ![](https://github.com/shalebark/anime-styled-face-alignment/raw/develop/examples/test_visuals.jpg) | ![](https://github.com/shalebark/anime-styled-face-alignment/raw/develop/examples/test_result.jpg)
+Source             |       Results
+:-------------------------:|:-------------------------:|
+![](https://github.com/shalebark/anime-styled-face-alignment/raw/centering/examples/moetron.jpg)  |  ![](https://github.com/shalebark/anime-styled-face-alignment/raw/centering/examples/moetron_result.jpg)
 
