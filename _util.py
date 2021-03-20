@@ -25,7 +25,7 @@ def calc_parts_center(face):
     bec = (int((lec[0] + rec[0]) / 2), int((lec[1] + rec[1]) / 2)) # center of both eyes
     tcc = (int((face.face.pos.x + face.face.pos.x + face.face.pos.width) / 2), face.face.pos.y) # top center position
     return {
-        'left-eye-center': lec, 'right-eye-center': rec, 'nose-center': nec, 'mouth-center': mec, 'chin-center': cec, 
+        'left-eye-center': lec, 'right-eye-center': rec, 'nose-center': nec, 'mouth-center': mec, 'chin-center': cec,
         'eye-center': bec, 'top-center': tcc
     }
 
@@ -58,7 +58,7 @@ def calc_rotated_position(origin, point, angle):
 
 def convert_pil_to_cv2_image(pil_image):
     """
-        Converts a PIL Image to a cv2 image. 
+        Converts a PIL Image to a cv2 image.
         Returns a cv2 image.
     """
     return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
@@ -102,14 +102,20 @@ def write_image(img, output_path):
     """
         Writes the image to disk.
         Parameters:
-            img: cv2 image. 
+            img: cv2 image.
             output_path: filepath to save to.
     """
     p = Path(output_path)
     if not p.parent.exists():
         p.parent.mkdir(parents=True, exist_ok=True)
 
-    cv2.imwrite(output_path, img)
+    i = 0
+    p2 = p
+    while p2.is_file and p2.exists():
+        p2 = p.parent.joinpath(p.stem + '.' + str(i+1) + p.suffix)
+        i += 1
+
+    cv2.imwrite(str(p2), img)
 
 def encode_image_to_buffer(img, fmt='.jpg'):
     return cv2.imencode(fmt, img)[1]
@@ -120,7 +126,7 @@ def encode_image_to_buffer(img, fmt='.jpg'):
 #         Returns if between_point is inside a polygon.
 
 #         Parameters:
-#             between_point: The point that is verified if is within the list of points. 
+#             between_point: The point that is verified if is within the list of points.
 #             polygon_points: An array of points, that are the vertexes of the polygon. The length of the array must be atleast 3.
 #     """
 #     assert len(polygon_points) >= 3, "polygon_points is too small, the length of the array must be atleast 3"

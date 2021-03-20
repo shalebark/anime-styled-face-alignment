@@ -1,42 +1,29 @@
 import argparse
 from pathlib import Path
 import sys
-import _util as util
+from api import get_and_align_all_faces
+import cv2
+from _util import write_image, encode_image_to_buffer
 
-from api import align_face, visualize_facial_lines
+def __write_image(image, outputp, quiet=False):
+    # output to stdout
+    if outputp is sys.stdout:
+        sys.stdout.buffer.write(encode_image_to_buffer(image))
+    # output to file
+    else:
+        write_image(image, str(outputp))
 
-def align_face_cli(imagep, outputp, quiet=False):
+def __cli_call(imagep, outputp, quiet=False):
     try:
         # api call to align image
-        aligned_image = align_face(filepath=str(imagep.absolute()))
+        faces = get_and_align_all_faces(imagepath=str(imagep))
 
-        if outputp is sys.stdout:
-            sys.stdout.buffer.write(util.encode_image_to_buffer(aligned_image))
-        else:
-            util.write_image(aligned_image, str(outputp))
-            # Message to stdout, success
-            if not quiet:
-                print('"{}" aligned. Save to: "{}"'.format(image, outputp))
+        for i, face in enumerate(faces):
+            __write_image(faces[0], outputp)
+
     except AssertionError as err:
         print('Unable to align image ' + image, file=sys.stderr)
         print(str(err), file=sys.stderr)
-
-def visualize_face_alignments_cli(imagep, outputp, quiet=False):
-    try:
-        # api call to visualize image
-        visualized_image = visualize_facial_lines(filepath=str(imagep.absolute()))
-
-        if outputp is sys.stdout:
-            sys.stdout.buffer.write(util.encode_image_to_buffer(visualized_image))
-        else:
-            util.write_image(visualized_image, str(outputp))
-            # Message to stdout, success
-            if not quiet:
-                print('"{}" visualized. Save to: "{}"'.format(image, outputp))
-    except AssertionError as err:
-        print('Unable to visuals image ' + image, file=sys.stderr)
-        print(str(err), file=sys.stderr)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Aligns Facial Features of Animated Characters')
@@ -46,8 +33,8 @@ if __name__ == '__main__':
         help='Output path. (default: current working directory)')
     parser.add_argument('-o', '--output-redirect', dest='is_to_stdout', action='store_true',
         help='Output image as binary data to stdout')
-    parser.add_argument('-V', '--visualize', dest='visualize', action='store_true', 
-        help='Draw the Visual Landmark Features')
+    # parser.add_argument('-V', '--visualize', dest='visualize', action='store_true',
+    #     help='Draw the Visual Landmark Features')
     parser.add_argument('-q', '--quiet', dest='quiet', action='store_true',
         help='Do not output success message.')
 
@@ -63,9 +50,4 @@ if __name__ == '__main__':
     else:
         outputp = destp if destp.suffix else destp.joinpath(imagep.name)
 
-    if args.visualize:
-        visualize_face_alignments_cli(imagep, outputp, args.quiet)
-    else:
-        align_face_cli(imagep, outputp, args.quiet)
-    
-    exit()
+    __cli_call(imagep, outputp, args.quiet)

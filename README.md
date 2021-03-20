@@ -5,7 +5,7 @@ An tool for face alignment for anime-styled faces.
 I made this tool because I needed a tool to align anime-styled faces. Sadly, I was able to find any freely available.
 The difficulty being most of facial alignment tools uses human facial landmark detection neural networks, and those are incompatible with anime styled faces.
 
-This package is meant to help alleviate that a bit, it's currently uses an anime-styled feature detection network from 2009. 
+This package is meant to help alleviate that a bit, it's currently uses an anime-styled feature detection network from 2009.
 Alignment is currently only on the z-axis and the alignment is currently done using eye landmarks.
 
 There are other alignment techniques that uses other facial features, but I didn't find much success with them.
@@ -60,17 +60,16 @@ import os, sys
 sys.path.append(os.path.abspath('anime_face_alignment'))
 
 # importing the library
-from anime_face_alignment import align_face as anime_face_align
+from anime_face_alignment.api import get_and_align_all_faces as anime_face_align
 # used to save the imagefile
 import cv2
 
 # aligning the image from filepath
-img = anime_face_align(filepath='filepath')
+faces = anime_face_align(imagepath='filepath')
 
-# aligning the image from image
-img = cv2.imread('filepath')
+for i, face in enumerate(faces):
+    cv2.imwrite(str(i) + '.jpg', face)
 
-cv2.imwrite('outputpath', img)
 ```
 
 # Results

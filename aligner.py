@@ -221,10 +221,3 @@ class Aligner:
         return self.align_image_main(img, landmarks, output_size, desired_left_eye_relative_position)
 
 
-# aligner = Aligner()
-# img = cv2.imread('tests/images/16_rot.jpg')
-# faces = aligner.get_faces_landmarks(img)
-
-# for i, face in enumerate(faces):
-#     o = aligner.align_and_extract_face(img.copy(), face)
-#     cv2.imwrite('tests/outputs/16_rot.' + str(i) + '.jpg', o)
