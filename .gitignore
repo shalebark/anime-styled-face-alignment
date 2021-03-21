@@ -4,5 +4,3 @@ __pycache__
 anime_face_landmark_detection/
 forlater
 tests/CFATest.py
-checkpoint_landmark_191116.pth.tar
-CFA_Wrapper.py

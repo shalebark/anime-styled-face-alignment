@@ -1,13 +1,24 @@
 from NVXS_Wrapper import NVXS_Wrapper as NVXS
+from CFA_Wrapper import CFA_Wrapper as CFA
 import cv2
 import numpy as np
 import warnings
 from geometric_utils import *
 
+
 class Aligner:
 
-    def __init__(self):
+    def __init__(self, use_cfa=True):
         self.nvxs = NVXS()
+        self.detector = self.nvxs
+
+        if use_cfa:
+            try:
+                self.cfa = CFA()
+                self.detector = self.cfa
+            except:
+                warnings.warn('Unable to enable CFA, using NVXS.')
+
 
     def get_faces_landmarks(self, image):
         """
@@ -17,7 +28,7 @@ class Aligner:
             Parameters:
                 image: An CV2 BGR Image
         """
-        return self.nvxs.get_faces_landmarks(image)
+        return self.detector.get_faces_landmarks(image)
 
     def preprocess_landmarks(self, landmarks):
         """
@@ -220,4 +231,9 @@ class Aligner:
         landmarks = self.preprocess_landmarks(landmarks)
         return self.align_image_main(img, landmarks, output_size, desired_left_eye_relative_position)
 
-
+aligner = Aligner(use_cfa=True)
+img = cv2.imread('tests/images/moetron.jpg')
+faces = aligner.get_faces_landmarks(img)
+# print(faces)
+output_img = aligner.align_and_extract_face(img, faces[0])
+cv2.imwrite('preview.jpg', output_img)
