@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 os.sys.path.append(Path(__file__).resolve().parent.__str__())
 
+from geometric_utils import *
+
 class Aligner:
 
     # get the angle needed to unrotate the face. angle is in radians
@@ -211,6 +213,66 @@ class Aligner:
 
         # convert to degrees
         return np.rad2deg(angle)
+
+    def check_face_landmarks_sensibility(self, face_landmarks):
+        """
+            Because the CFA Landmark generator tries to force, a face into everything it sees, it will sometimes incorrectly identify the landmarks.
+            This is especially true for faces that are facing the side.
+
+            To combat this, we'll need to make several sanity checks.
+
+            1. Is the x-coordinate of the nose between the x-coordinates of the eyes.
+            2. Is the y-coordinate of the nose below the y-coordinates of the eyes.
+            3. Is the y-coordinate of the mouth below the y-coordinates of the nose.
+            4. Is the x-coordinate of the mouth between the x-coordinates of the eyes.
+            5. Is the distance between the nose and the mouth less than 1/10th of the width or height, whichever is smaller.
+            6. Is the distance between the eyes less than 1/10th of the width or height, whichever is smaller.
+            7. Is the distance between the chin and the mouth less than 1/10th of the width or height, whichever is smaller.
+
+        """
+
+        left_eye_pos = face_landmarks['left-eye-center-pos']
+        right_eye_pos = face_landmarks['right-eye-center-pos']
+        center_eye_pos = face_landmarks['eye-center-pos']
+        nose_pos = face_landmarks['nose-pos']
+        mouth_pos = face_landmarks['mouth-center-pos']
+        chin_pos = face_landmarks['chin-pos']
+        facebox = face_landmarks['face-box']
+
+        # condition 1
+        if not ( (right_eye_pos[0] < nose_pos[0]) and (nose_pos[0] < left_eye_pos[0]) ):
+            return False
+
+        # condition 2
+        if not ( center_eye_pos[1] < nose_pos[1]):
+            return False
+
+        # condition 3
+        if not ( nose_pos[1] < mouth_pos[1] ):
+            return False
+
+        # condition 4
+        if not ( (right_eye_pos[0] < mouth_pos[0]) and (mouth_pos[0] < left_eye_pos[0]) ):
+            return False
+
+        min_face_distance = min(facebox[2], facebox[3])
+
+        def calc_distance(p1, p2):
+            return np.sum(np.subtract(p1, p2) ** 2) ** 0.5
+
+        # condition 5
+        if not (calc_distance(mouth_pos, nose_pos) > min_face_distance / 10):
+            return False
+
+        # condition 6
+        if not (calc_distance(left_eye_pos, right_eye_pos) > min_face_distance / 10):
+            return False
+
+        # condition 7
+        if not (calc_distance(mouth_pos, chin_pos) > min_face_distance / 10):
+            return False
+
+        return True
 
 
 # import os
