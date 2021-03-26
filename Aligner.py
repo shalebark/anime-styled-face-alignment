@@ -281,18 +281,36 @@ class Aligner:
 # os.sys.path.append(ppdir)
 
 # from NVXS_FaceDetector.NVXS_FaceDetector import NVXS_FaceDetector
-# from CFA_FaceLandmarkDetector.CFA_FaceLandmarkDetector import CFA_LandmarkDetector
 # from RCNN_FaceDetector.RCNN_FaceDetector import RCNN_FaceDetector
+# from CFA_FaceLandmarkDetector.CFA_FaceLandmarkDetector import CFA_LandmarkDetector
+
+# import time
+# start_time = time.time()
+
+# # main code
 
 # aligner = Aligner()
-# # face_detector = NVXS_FaceDetector()
-# face_detector = RCNN_FaceDetector()
+
+# # IMREAD - TIME NEEDED TO READ IMAGES
+# # 0.7 SECONDS -- LONGER THAN I WOULD HAVE LIKED IT
+
+# # 22 / 50 seconds with rcnn
+# # 24 / 50 seconds withrcnn + detection
+
+# # 24 seconds for everything????
+# # possible but I think it's dependent on computer conditions
+
+# face_detector = RCNN_FaceDetector(nms_type='GPU_NMS')
+# # 78 SECONDS TOTAL / 50 (THIS MEANS THIS IS NEGLIGIBLE TIME)
 # landmark_detector = CFA_LandmarkDetector()
 
-# image = cv2.imread('tests/images/58275.jpg')
-# faceboxes = face_detector.detect_faceboxes(image)
-# for i, facebox in enumerate(faceboxes):
-#     face_landmarks = landmark_detector.detect_landmarks(image, facebox)
-#     face_image = aligner.align_and_extract_face(image, face_landmarks)
-#     cv2.imwrite('preview{}.jpg'.format(str(i)), face_image)
-#     print(i, face_landmarks, aligner.calc_y_cross_angle(face_landmarks))
+# for i in range(0, 50):
+#     image = cv2.imread('305.jpg')
+#     faceboxes = face_detector.detect_faceboxes(image)
+#     for i, facebox in enumerate(faceboxes):
+#         face_landmarks = landmark_detector.detect_landmarks(image, facebox)
+#         face_image = aligner.align_and_extract_face(image, face_landmarks)
+#         # cv2.imwrite('preview{}.jpg'.format(str(i)), face_image)
+#         # print(i, face_landmarks, aligner.calc_y_cross_angle(face_landmarks))
+
+# print("--- %s seconds ---" % (time.time() - start_time))
